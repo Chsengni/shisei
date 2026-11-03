@@ -1,0 +1,33 @@
+{
+  "name": "shisei-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Gallery frontend for Shisei (web/src); tools/build_site.py renders site/ from its Vite build.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vite build --config vite.sw.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
+    "preview": "python3 tools/build_site.py --link-images --no-og && python3 -m http.server 8000 -d site",
+    "build:vercel": "npm run build && python3 tools/build_site.py --public --no-og --site \"https://${VERCEL_PROJECT_PRODUCTION_URL:-${VERCEL_URL:-shisei.vercel.app}}\""
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.4",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7",
+    "workbox-cacheable-response": "^7.4.1",
+    "workbox-core": "^7.4.1",
+    "workbox-expiration": "^7.4.1",
+    "workbox-routing": "^7.4.1",
+    "workbox-strategies": "^7.4.1"
+  },
+  "dependencies": {
+    "@page-agent/core": "^1.12.4",
+    "@page-agent/page-controller": "^1.12.4",
+    "zod": "^4.6.7"
+  }
+}

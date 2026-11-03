@@ -1,0 +1,38 @@
+/* Self-hosted Latin subsets (2026-11-01): Google Fonts sent 1.6 MB in 28 requests (Noto Sans SC in slices) and is
+   often unreachable from mainland China, where its stylesheet held up the first render. Chinese, Japanese and Korean
+   text use the reader's system fonts. Vite hashes them into assets/ with the stylesheet. */
+@font-face { font-family: 'Inter Tight'; font-style: normal; font-weight: 500 800; font-display: swap; src: url(../../fonts/inter-tight-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url(../../fonts/jetbrains-mono-500-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+:root {
+  --bg: #F5F2ED; --bg2: #ECE7DF; --field: #F8F6F2; --card: #FFFFFF;
+  --line: #DCD6CC; --line2: #E4DFD7;
+  --ink: #18181B; --ink2: #3F3D39; --ink3: #55534E; --ink4: #6B6862;
+  --accent: #E07A52; --shadow: #EDB79C; --new: #F2F08A; --new-ink: #18181B; --mark: #F2F08A;
+  --tile: #ECE7DF; --tile-photo: #ECE7DF; --tile-photo-on: #E3DDD3;
+  --btn: #18181B; --btn-ink: #FFFFFF;
+  --glow: #F3E6DC;
+  /* Latin from the two self-hosted fonts (web/fonts, OFL); CJK from the reader's system, per page language. */
+  --cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Source Han Sans SC';
+  --f: 'Inter Tight', var(--cjk), system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161513; --bg2: #24221F; --field: #1D1B19; --card: #1D1B19;
+    --line: #3A3733; --line2: #2E2B28;
+    --ink: #F2EFE9; --ink2: #D9D4CB; --ink3: #B7B1A7; --ink4: #9E988E;
+    --shadow: #6E4331; --glow: #2A211C; --mark: #5C5318;
+    --btn: #F2EFE9; --btn-ink: #161513;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161513; --bg2: #24221F; --field: #1D1B19; --card: #1D1B19;
+  --line: #3A3733; --line2: #2E2B28;
+  --ink: #F2EFE9; --ink2: #D9D4CB; --ink3: #B7B1A7; --ink4: #9E988E;
+  --shadow: #6E4331; --glow: #2A211C; --mark: #5C5318;
+  --btn: #F2EFE9; --btn-ink: #161513;
+  color-scheme: dark;
+}
+

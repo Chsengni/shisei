@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 __HEAD__
 <meta name="theme-color" content="#F5F2ED">
-<link rel="preload" href="__BASE__fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="__BASE__app.css?v=__VERSION__">
+<!--vite:head:__BASE__-->
 </head>
 <body>
 <a class="skip" href="#all">__SKIP__</a>
@@ -197,9 +196,6 @@ __NOSCRIPT__
 
 <script id="catalog" type="application/json">__CATALOG__</script>
 <script>window.SHISEI = { repo: '__REPO__', version: '__VERSION__', base: '__BASE__', lang: '__LOC__', packs: __PACKS__ };</script>
-<script src="__BASE__i18n.js?v=__VERSION__"></script>
-<script src="__BASE__common.js?v=__VERSION__"></script>
-<script src="__BASE__tray.js?v=__VERSION__"></script>
-<script src="__BASE__app.js?v=__VERSION__"></script>
+<!--vite:gallery:__BASE__-->
 </body>
 </html>

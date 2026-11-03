@@ -1,35 +1,46 @@
 // UI strings for the four page languages. Pose names and categories come from the catalog.
 // Values may be functions when they take a number or a view name.
-window.I18N = {
-  zh: {
+import type { Loc } from './types';
+
+const uiZh = {
     htmlLang: 'zh-CN', suffix: 'cn',
+    agent: {
+      toggle: 'AI 助手', title: 'AI 助手 · page-agent', close: '收起助手',
+      intro: '用一句话让 AI 替你操作这个页面，比如「打开 P012 的侧面线稿」或「只看上半身系列」。',
+      settings: '模型设置', baseURL: 'Base URL', model: '模型', apiKey: 'API Key', save: '保存设置', saved: '已保存',
+      keyNote: 'Key 只存在这台设备的浏览器里（localStorage），只发给你填的 Base URL，不会上传到本站。',
+      task: '任务', taskPh: '想让助手做什么？', run: '运行', stop: '停止', clear: '清空记录',
+      needConfig: '先填 Base URL、模型和 API Key。', loading: '正在加载 page-agent…', loadFail: 'page-agent 加载失败，请检查网络后重试。',
+      answer: '回答', askPh: '你的回答', done: '完成', failed: '没能完成',
+      status: { idle: '空闲', running: '运行中', completed: '已完成', error: '出错', stopped: '已停止' }
+    },
     navHow: '使用方法',
     madeTag: '方法论', madeText: '21 小时从零做出这套图库', madeShort: '21 小时做成',
     gpuText: 'UCloud · Agent 友好的算力', gpuShort: 'UCloud 算力', gpuNote: '推荐链接，注册后作者可获返佣',
     langLabel: '切换语言', theme: '切换深色模式',
     heroTitle: ['姿势参考', '五机位'],
-    heroSub: (n, v) => n + ' 套无脸素体姿势、' + v + ' 张线稿，正面、斜侧、侧面、俯视、仰视最多五个机位；大部分机位另有白模、深度图和法线图。拖进你的 AI 绘图工具，姿势就定住了。',
-    browse: (n) => '浏览 ' + n + ' 套姿势', downloadAll: '下载图包', worksWith: '适用于',
+    heroSub: (n: number, v: string) => n + ' 套无脸素体姿势、' + v + ' 张线稿，正面、斜侧、侧面、俯视、仰视最多五个机位；大部分机位另有白模、深度图和法线图。拖进你的 AI 绘图工具，姿势就定住了。',
+    browse: (n: number) => '浏览 ' + n + ' 套姿势', downloadAll: '下载图包', worksWith: '适用于',
     allTitle: '全部姿势', all: '全部', angleAll: '全部机位',
     series: { all: '全部系列', std: '全身・标准', sexy: '全身・性感', upper: '上半身', duo: '双人' }, seriesLabel: '系列',
     adultOn: '性感内容：显示', adultOff: '性感内容：模糊', adultHint: '全身性感、双人系列和上半身的性感、胸线强调分类默认模糊显示；点单张可单独查看，点这里全部显示',
-    veilTap: '点按显示', veilShow: (id) => '显示 ' + id, veilTitle: '性感姿势，已模糊', veilOne: '显示这一套', veilAll: '全部显示', nudge: (n) => '已单独显示 ' + n + ' 套',
+    veilTap: '点按显示', veilShow: (id: string) => '显示 ' + id, veilTitle: '性感姿势，已模糊', veilOne: '显示这一套', veilAll: '全部显示', nudge: (n: number) => '已单独显示 ' + n + ' 套',
     cats: ['坐姿', '站立', '跪姿', '躺姿', '侧坐', '蹲姿', '前倾', '后仰', '扭转'],
     angle: '机位', medium: '素材', view: '视图',
     line: '线稿', photo: '实拍', compare: '对比', byPose: '按姿势', single: '逐张',
-    countPoses: (n, all) => n + ' / ' + all + ' 套', countImages: (n) => n + ' 张',
+    countPoses: (n: number, all: number) => n + ' / ' + all + ' 套', countImages: (n: number) => n + ' 张',
     hasPhoto: '含实拍',
     clay: '白模', depth: '深度', normal: '法线', overlay: '对照线稿',
     fmtNote: { clay: '灰色人台，带体积和明暗，和线稿一样可以直接当参考图。', depth: '深度图，白近黑远。给 ComfyUI 等的 ControlNet Depth 用，会带上人台的体型。', normal: '法线图，颜色表示表面朝向。给 ControlNet Normal 用，会带上人台的体型。' },
     gapLine: '正在补画', gapLineSub: '这个机位还在画，先看看别的吧', gapLineShort: '补画中',
-    gapPhoto: '暂无实拍', gapPhotoSub: '这个机位先看线稿吧', gapPhotoShort: '无实拍', gapMap: (f) => '暂无' + f, overview: '全部格式', allShort: '全部', retry: '重试', saveAngle: '保存这个机位', howSave: '怎么保存？', saveFmt: (f) => '保存' + f, holdMany: '这个浏览器不能一次存多张。点一张放大，再长按图片选「保存图片」。', overviewNote: '同一机位的全部格式，点一张放大。', gapOther: '先看看别的机位吧',
-    goView: (v) => '看' + v, goLine: '看线稿', goPhoto: '看实拍',
+    gapPhoto: '暂无实拍', gapPhotoSub: '这个机位先看线稿吧', gapPhotoShort: '无实拍', gapMap: (f: string) => '暂无' + f, overview: '全部格式', allShort: '全部', retry: '重试', saveAngle: '保存这个机位', howSave: '怎么保存？', saveFmt: (f: string) => '保存' + f, holdMany: '这个浏览器不能一次存多张。点一张放大，再长按图片选「保存图片」。', overviewNote: '同一机位的全部格式，点一张放大。', gapOther: '先看看别的机位吧',
+    goView: (v: string) => '看' + v, goLine: '看线稿', goPhoto: '看实拍',
     empty: '没有找到匹配的姿势', cols2: '两列', cols3: '三列', prevPose: '上一套', nextPose: '下一套', details: '详情',
-    close: '关闭', prevAngle: '上一个机位', nextAngle: '下一个机位', open: (id) => '打开 ' + id + ' 大图',
+    close: '关闭', prevAngle: '上一个机位', nextAngle: '下一个机位', open: (id: string) => '打开 ' + id + ' 大图',
     download: '下载这张', saveAlbum: '保存到相册', holdToSave: '长按图片，选「保存图片」即可存到相册', preparing: '正在准备图片，稍后再点一次', copyId: '复制 ID', fullZip: '下载图包',
-    dlRec: '推荐', dlAll: '全部系列', dlLine: '线稿 · 全部系列', dlLineSub: (n) => n + ' 套 · 五个机位。大多数人只要这个。', dlComplete: '全部格式 · 一次下完',
-    dlMaps: (n) => '只要新格式（全部系列，' + n + ' 个机位）', dlMapSub: { clay: '灰色人台，带体积和明暗，直接当参考图', depth: '给 ControlNet Depth', normal: '给 ControlNet Normal' },
-    dlBySeries: '只要一个系列（线稿 + 实拍）', dlSets: (n) => n + ' 套', dlPhotoNote: '实拍只有全身 · 标准里的部分姿势有。',
+    dlRec: '推荐', dlAll: '全部系列', dlLine: '线稿 · 全部系列', dlLineSub: (n: number) => n + ' 套 · 五个机位。大多数人只要这个。', dlComplete: '全部格式 · 一次下完',
+    dlMaps: (n: number) => '只要新格式（全部系列，' + n + ' 个机位）', dlMapSub: { clay: '灰色人台，带体积和明暗，直接当参考图', depth: '给 ControlNet Depth', normal: '给 ControlNet Normal' },
+    dlBySeries: '只要一个系列（线稿 + 实拍）', dlSets: (n: number) => n + ' 套', dlPhotoNote: '实拍只有全身 · 标准里的部分姿势有。',
     dlOriginalAll: '原图包 · 线稿 + 实拍，原始尺寸', dlOriginalSub: '要打印或放大才需要。白模、深度、法线没有原图：它们本来就是 900 px。', dlLicense: '图片 CC0 · 每张 900 px，做参考足够',
     keys: '← → 换机位　↑ ↓ 换姿势　L 切换素材　Esc 返回或关闭',
     terms: '注意事项',
@@ -37,36 +48,52 @@ window.I18N = {
     how: ['把图片上传到 AI 绘图工具的姿势参考或构图参考里。', '同一个姿势换机位连续使用，生成出来的姿态更一致。', '线稿是无脸素体，脸、服装和背景靠提示词或别的参考图补上。', '大图里可以换成白模、深度图、法线图：白模带体积和明暗；深度和法线给 ComfyUI 的 ControlNet 用。', '点卡片看大图，← → 换机位，↑ ↓ 换姿势，Esc 关闭。'],
     termsTitle: '注意事项',
     termsItems: ['全部图片由 Shisei 自制，以 CC0 放弃权利，可商用、可再分发，不需要署名。姿势目录沿用ギア（@giaaibusi）的 ai-pose-gallery，在此致谢。', '线稿画的是素体；实拍图是 AI 生成的成年人物，不对应任何真人。图片元数据已清除。', '请勿用于表现真实人物或未成年人，也不要用于违反公序良俗的用途。']
-  },
+  };
+
+/** Every language has every key of the zh table; the compiler checks it. */
+export type UIStrings = typeof uiZh;
+
+export const I18N_UI: Record<Loc, UIStrings> = {
+  zh: uiZh,
   ja: {
     htmlLang: 'ja', suffix: 'jp',
+    agent: {
+      toggle: 'AI アシスタント', title: 'AI アシスタント · page-agent', close: 'アシスタントを閉じる',
+      intro: 'ひとことで AI にこのページを操作させます。例：「P012 の横の線画を開いて」「上半身シリーズだけ表示」。',
+      settings: 'モデル設定', baseURL: 'Base URL', model: 'モデル', apiKey: 'API キー', save: '設定を保存', saved: '保存しました',
+      keyNote: 'キーはこの端末のブラウザ（localStorage）にだけ保存され、入力した Base URL にだけ送られます。本サイトには送信されません。',
+      task: 'タスク', taskPh: 'アシスタントに何をさせますか？', run: '実行', stop: '停止', clear: 'ログを消去',
+      needConfig: '先に Base URL・モデル・API キーを入力してください。', loading: 'page-agent を読み込み中…', loadFail: 'page-agent を読み込めませんでした。接続を確認してもう一度お試しください。',
+      answer: '回答', askPh: 'あなたの回答', done: '完了', failed: '完了できませんでした',
+      status: { idle: '待機中', running: '実行中', completed: '完了', error: 'エラー', stopped: '停止' }
+    },
     navHow: '使い方',
     madeTag: 'メイキング', madeText: 'このポーズ集の作り方（中国語）', madeShort: '作り方',
     gpuText: 'UCloud・エージェント向け GPU', gpuShort: 'UCloud GPU', gpuNote: '紹介リンク：登録すると作者に紹介報酬が入ります（中国語サイト）',
     langLabel: '言語を切り替え', theme: 'ダークモード切り替え',
     heroTitle: ['素体ポーズ集', '5アングル'],
-    heroSub: (n, v) => '顔なし素体の線画 ' + n + ' ポーズ・' + v + ' 枚。正面・斜め・横・上から・下からの最大 5 アングルを収録し、ほとんどのアングルにクレイ・深度・法線マップもあります。AI 画像生成のポーズ参照にそのまま使えます。',
-    browse: (n) => n + ' ポーズを見る', downloadAll: 'まとめてダウンロード', worksWith: '対応ツール',
+    heroSub: (n: number, v: string) => '顔なし素体の線画 ' + n + ' ポーズ・' + v + ' 枚。正面・斜め・横・上から・下からの最大 5 アングルを収録し、ほとんどのアングルにクレイ・深度・法線マップもあります。AI 画像生成のポーズ参照にそのまま使えます。',
+    browse: (n: number) => n + ' ポーズを見る', downloadAll: 'まとめてダウンロード', worksWith: '対応ツール',
     allTitle: 'すべてのポーズ', all: 'すべて', angleAll: '全アングル',
     series: { all: '全シリーズ', std: '全身・標準', sexy: '全身・セクシー', upper: '上半身', duo: 'ふたり' }, seriesLabel: 'シリーズ',
     adultOn: 'セクシー系：表示', adultOff: 'セクシー系：ぼかし', adultHint: '全身セクシー・ふたりと上半身のセクシー系・胸元強調系は初期状態でぼかしています。1 枚ずつタップで表示、ここで全部表示できます',
-    veilTap: 'タップで表示', veilShow: (id) => id + ' を表示', veilTitle: 'セクシー系・ぼかし中', veilOne: 'このポーズを表示', veilAll: 'すべて表示', nudge: (n) => n + ' ポーズを個別に表示中',
+    veilTap: 'タップで表示', veilShow: (id: string) => id + ' を表示', veilTitle: 'セクシー系・ぼかし中', veilOne: 'このポーズを表示', veilAll: 'すべて表示', nudge: (n: number) => n + ' ポーズを個別に表示中',
     cats: ['座り', '立ち', '膝立ち', '寝そべり', '横座り', 'しゃがみ', '前かがみ', '反り', 'ひねり'],
     angle: 'アングル', medium: '素材', view: '表示',
     line: '線画', photo: '実写', compare: '比較', byPose: 'ポーズごと', single: '1枚ずつ',
-    countPoses: (n, all) => n + ' / ' + all + ' ポーズ', countImages: (n) => n + ' 枚',
+    countPoses: (n: number, all: number) => n + ' / ' + all + ' ポーズ', countImages: (n: number) => n + ' 枚',
     hasPhoto: '実写あり',
     clay: 'クレイ', depth: '深度', normal: '法線', overlay: '線画と比較',
     fmtNote: { clay: 'グレーのマネキン。立体感と陰影があり、線画と同じく参照画像としてそのまま使えます。', depth: '深度マップ（白が手前、黒が奥）。ComfyUI などの ControlNet Depth 用。マネキンの体型も反映されます。', normal: '法線マップ（色で面の向きを表します）。ControlNet Normal 用。マネキンの体型も反映されます。' },
     gapLine: 'ただいま描き足し中', gapLineSub: 'ほかのアングルを先にどうぞ', gapLineShort: '描き足し中',
-    gapPhoto: '実写はまだありません', gapPhotoSub: 'このアングルは線画でどうぞ', gapPhotoShort: '実写なし', gapMap: (f) => f + 'はありません', overview: 'すべての形式', allShort: 'すべて', retry: '再読み込み', saveAngle: 'このアングルを保存', howSave: '保存のしかた', saveFmt: (f) => f + 'を保存', holdMany: 'このブラウザではまとめて保存できません。画像をタップして拡大し、長押しで「写真に保存」を選んでください。', overviewNote: 'このアングルのすべての形式。タップで拡大します。', gapOther: 'ほかのアングルを先にどうぞ',
-    goView: (v) => v + 'を見る', goLine: '線画を見る', goPhoto: '実写を見る',
+    gapPhoto: '実写はまだありません', gapPhotoSub: 'このアングルは線画でどうぞ', gapPhotoShort: '実写なし', gapMap: (f: string) => f + 'はありません', overview: 'すべての形式', allShort: 'すべて', retry: '再読み込み', saveAngle: 'このアングルを保存', howSave: '保存のしかた', saveFmt: (f: string) => f + 'を保存', holdMany: 'このブラウザではまとめて保存できません。画像をタップして拡大し、長押しで「写真に保存」を選んでください。', overviewNote: 'このアングルのすべての形式。タップで拡大します。', gapOther: 'ほかのアングルを先にどうぞ',
+    goView: (v: string) => v + 'を見る', goLine: '線画を見る', goPhoto: '実写を見る',
     empty: '該当するポーズがありません', cols2: '2列', cols3: '3列', prevPose: '前のポーズ', nextPose: '次のポーズ', details: '詳細',
-    close: '閉じる', prevAngle: '前のアングル', nextAngle: '次のアングル', open: (id) => id + ' を拡大表示',
+    close: '閉じる', prevAngle: '前のアングル', nextAngle: '次のアングル', open: (id: string) => id + ' を拡大表示',
     download: 'この画像をダウンロード', saveAlbum: '写真に保存', holdToSave: '画像を長押しして「写真に保存」を選んでください', preparing: '画像を準備中です。少し待ってもう一度タップしてください', copyId: 'ID をコピー', fullZip: 'まとめてダウンロード',
-    dlRec: 'おすすめ', dlAll: 'すべてのシリーズ', dlLine: '線画 · すべてのシリーズ', dlLineSub: (n) => n + ' ポーズ · 5 アングル。ほとんどの人はこれだけで十分です。', dlComplete: 'すべての形式 · まとめて',
-    dlMaps: (n) => '新しい形式だけ（全シリーズ、' + n + ' アングル）', dlMapSub: { clay: '陰影のあるグレーのマネキン。参照画像にそのまま', depth: 'ControlNet Depth 用', normal: 'ControlNet Normal 用' },
-    dlBySeries: 'シリーズごと（線画 + 実写）', dlSets: (n) => n + ' ポーズ', dlPhotoNote: '実写は全身・標準の一部のポーズだけにあります。',
+    dlRec: 'おすすめ', dlAll: 'すべてのシリーズ', dlLine: '線画 · すべてのシリーズ', dlLineSub: (n: number) => n + ' ポーズ · 5 アングル。ほとんどの人はこれだけで十分です。', dlComplete: 'すべての形式 · まとめて',
+    dlMaps: (n: number) => '新しい形式だけ（全シリーズ、' + n + ' アングル）', dlMapSub: { clay: '陰影のあるグレーのマネキン。参照画像にそのまま', depth: 'ControlNet Depth 用', normal: 'ControlNet Normal 用' },
+    dlBySeries: 'シリーズごと（線画 + 実写）', dlSets: (n: number) => n + ' ポーズ', dlPhotoNote: '実写は全身・標準の一部のポーズだけにあります。',
     dlOriginalAll: '原寸パック · 線画 + 実写', dlOriginalSub: '印刷や拡大に。クレイ・深度・法線は元から 900 px なので原寸版はありません。', dlLicense: '画像 CC0 · 各 900 px、参照には十分です',
     keys: '← → アングル　↑ ↓ ポーズ　L 素材切り替え　Esc 戻る・閉じる',
     terms: '注意点',
@@ -77,33 +104,43 @@ window.I18N = {
   },
   en: {
     htmlLang: 'en', suffix: 'en',
+    agent: {
+      toggle: 'AI assistant', title: 'AI assistant · page-agent', close: 'Close assistant',
+      intro: 'Tell the AI what to do on this page in one sentence, e.g. “open P012 side view line art” or “show only the upper-body series”.',
+      settings: 'Model settings', baseURL: 'Base URL', model: 'Model', apiKey: 'API key', save: 'Save settings', saved: 'Saved',
+      keyNote: 'Your key stays in this browser (localStorage) and is sent only to the base URL you enter, never to this site.',
+      task: 'Task', taskPh: 'What should the assistant do?', run: 'Run', stop: 'Stop', clear: 'Clear log',
+      needConfig: 'Fill in the base URL, model and API key first.', loading: 'Loading page-agent…', loadFail: 'Could not load page-agent. Check your connection and try again.',
+      answer: 'Answer', askPh: 'Your answer', done: 'Done', failed: 'Could not finish',
+      status: { idle: 'Idle', running: 'Running', completed: 'Completed', error: 'Error', stopped: 'Stopped' }
+    },
     navHow: 'How to use',
     madeTag: 'Making of', madeText: 'How this library was built (Chinese)', madeShort: 'How it’s made',
     gpuText: 'UCloud · agent-friendly GPUs', gpuShort: 'UCloud GPUs', gpuNote: 'Referral link: the author earns a commission if you sign up (site in Chinese)',
     langLabel: 'Change language', theme: 'Toggle dark mode',
     heroTitle: ['Mannequin pose reference', 'in 5 angles'],
-    heroSub: (n, v) => n + ' faceless mannequin poses in ' + v + ' line-art views, from up to five angles: front, three-quarter, side, above and below; most also come as clay, depth and normal maps. Drop one into your AI image tool and the pose holds.',
-    browse: (n) => 'Browse ' + n + ' poses', downloadAll: 'Download pack', worksWith: 'Works with',
+    heroSub: (n: number, v: string) => n + ' faceless mannequin poses in ' + v + ' line-art views, from up to five angles: front, three-quarter, side, above and below; most also come as clay, depth and normal maps. Drop one into your AI image tool and the pose holds.',
+    browse: (n: number) => 'Browse ' + n + ' poses', downloadAll: 'Download pack', worksWith: 'Works with',
     allTitle: 'All poses', all: 'All', angleAll: 'All angles',
     series: { all: 'All series', std: 'Full body', sexy: 'Full body · Sexy', upper: 'Upper body', duo: 'Duo' }, seriesLabel: 'Series',
     adultOn: 'Sexy poses: shown', adultOff: 'Sexy poses: blurred', adultHint: 'The full-body sexy and duo series and the sexy and chest-emphasis upper-body categories are blurred by default; tap one to see it, or click here to show them all',
-    veilTap: 'Tap to show', veilShow: (id) => 'Show ' + id, veilTitle: 'Sexy pose, blurred', veilOne: 'Show this pose', veilAll: 'Show all', nudge: (n) => 'Showing ' + n + ' one by one',
+    veilTap: 'Tap to show', veilShow: (id: string) => 'Show ' + id, veilTitle: 'Sexy pose, blurred', veilOne: 'Show this pose', veilAll: 'Show all', nudge: (n: number) => 'Showing ' + n + ' one by one',
     cats: ['Sitting', 'Standing', 'Kneeling', 'Lying', 'Side sit', 'Squatting', 'Leaning', 'Arching', 'Twist'],
     angle: 'Angle', medium: 'Source', view: 'View',
     line: 'Line art', photo: 'Photo', compare: 'Compare', byPose: 'By pose', single: 'Single',
-    countPoses: (n, all) => n + ' / ' + all + ' poses', countImages: (n) => n + ' images',
+    countPoses: (n: number, all: number) => n + ' / ' + all + ' poses', countImages: (n: number) => n + ' images',
     hasPhoto: 'Photo',
     clay: 'Clay', depth: 'Depth', normal: 'Normal', overlay: 'Line art',
     fmtNote: { clay: 'A grey mannequin with volume and shading; use it as a reference image just like the line art.', depth: 'Depth map, white is near. For ControlNet Depth in ComfyUI and similar tools; it carries the mannequin\'s build.', normal: 'Normal map, colour shows which way each surface faces. For ControlNet Normal; it carries the mannequin\'s build.' },
     gapLine: 'Still drawing this one', gapLineSub: 'Meanwhile, try another angle', gapLineShort: 'Drawing',
-    gapPhoto: 'No photo yet', gapPhotoSub: 'The line art has this angle', gapPhotoShort: 'No photo', gapMap: (f) => 'No ' + f.toLowerCase() + ' map', overview: 'All formats', allShort: 'All', retry: 'Retry', saveAngle: 'Save this angle', howSave: 'How to save', saveFmt: (f) => 'Save ' + f.toLowerCase(), holdMany: 'This browser can\'t save several images at once. Tap one to enlarge it, then press and hold it and choose Save Image.', overviewNote: 'Every format of this angle. Click one to enlarge it.', gapOther: 'Meanwhile, try another angle',
-    goView: (v) => 'See ' + v, goLine: 'See line art', goPhoto: 'See photo',
+    gapPhoto: 'No photo yet', gapPhotoSub: 'The line art has this angle', gapPhotoShort: 'No photo', gapMap: (f: string) => 'No ' + f.toLowerCase() + ' map', overview: 'All formats', allShort: 'All', retry: 'Retry', saveAngle: 'Save this angle', howSave: 'How to save', saveFmt: (f: string) => 'Save ' + f.toLowerCase(), holdMany: 'This browser can\'t save several images at once. Tap one to enlarge it, then press and hold it and choose Save Image.', overviewNote: 'Every format of this angle. Click one to enlarge it.', gapOther: 'Meanwhile, try another angle',
+    goView: (v: string) => 'See ' + v, goLine: 'See line art', goPhoto: 'See photo',
     empty: 'No poses match', cols2: 'Two columns', cols3: 'Three columns', prevPose: 'Previous pose', nextPose: 'Next pose', details: 'Details',
-    close: 'Close', prevAngle: 'Previous angle', nextAngle: 'Next angle', open: (id) => 'Open ' + id,
+    close: 'Close', prevAngle: 'Previous angle', nextAngle: 'Next angle', open: (id: string) => 'Open ' + id,
     download: 'Download', saveAlbum: 'Save to Photos', holdToSave: 'Press and hold the image, then choose Save', preparing: 'Getting the image ready, tap again in a moment', copyId: 'Copy ID', fullZip: 'Download pack',
-    dlRec: 'Recommended', dlAll: 'All series', dlLine: 'Line art · all series', dlLineSub: (n) => n + ' poses · 5 angles. Most people only need this.', dlComplete: 'Every format · one download',
-    dlMaps: (n) => 'Just the new formats (all series, ' + n + ' views)', dlMapSub: { clay: 'Shaded grey mannequin; use it as a reference image', depth: 'For ControlNet Depth', normal: 'For ControlNet Normal' },
-    dlBySeries: 'Just one series (line art + photos)', dlSets: (n) => n + ' poses', dlPhotoNote: 'Photos exist only for some full body · standard poses.',
+    dlRec: 'Recommended', dlAll: 'All series', dlLine: 'Line art · all series', dlLineSub: (n: number) => n + ' poses · 5 angles. Most people only need this.', dlComplete: 'Every format · one download',
+    dlMaps: (n: number) => 'Just the new formats (all series, ' + n + ' views)', dlMapSub: { clay: 'Shaded grey mannequin; use it as a reference image', depth: 'For ControlNet Depth', normal: 'For ControlNet Normal' },
+    dlBySeries: 'Just one series (line art + photos)', dlSets: (n: number) => n + ' poses', dlPhotoNote: 'Photos exist only for some full body · standard poses.',
     dlOriginalAll: 'Originals · line art + photos, full size', dlOriginalSub: 'For printing or enlarging. Clay, depth and normal have no originals: they are 900 px to begin with.', dlLicense: 'Images CC0 · 900 px each, plenty for reference',
     keys: '← → angle   ↑ ↓ pose   L switch format   Esc back / close',
     terms: 'Terms',
@@ -114,33 +151,43 @@ window.I18N = {
   },
   ko: {
     htmlLang: 'ko', suffix: 'kr',
+    agent: {
+      toggle: 'AI 도우미', title: 'AI 도우미 · page-agent', close: '도우미 닫기',
+      intro: '한 문장으로 AI가 이 페이지를 조작하게 하세요. 예: 「P012 측면 선화 열기」, 「상반신 시리즈만 보기」.',
+      settings: '모델 설정', baseURL: 'Base URL', model: '모델', apiKey: 'API 키', save: '설정 저장', saved: '저장했습니다',
+      keyNote: '키는 이 기기의 브라우저(localStorage)에만 저장되며 입력한 Base URL로만 전송됩니다. 이 사이트로는 보내지 않습니다.',
+      task: '작업', taskPh: '도우미에게 무엇을 시킬까요?', run: '실행', stop: '중지', clear: '기록 지우기',
+      needConfig: '먼저 Base URL, 모델, API 키를 입력하세요.', loading: 'page-agent 불러오는 중…', loadFail: 'page-agent를 불러오지 못했습니다. 연결을 확인하고 다시 시도하세요.',
+      answer: '답변', askPh: '답변 입력', done: '완료', failed: '완료하지 못했습니다',
+      status: { idle: '대기', running: '실행 중', completed: '완료', error: '오류', stopped: '중지됨' }
+    },
     navHow: '사용법',
     madeTag: '제작기', madeText: '이 자료를 만든 방법 (중국어)', madeShort: '제작 과정',
     gpuText: 'UCloud · 에이전트 친화 GPU', gpuShort: 'UCloud GPU', gpuNote: '추천 링크: 가입하면 제작자가 수수료를 받습니다 (중국어 사이트)',
     langLabel: '언어 변경', theme: '다크 모드 전환',
     heroTitle: ['마네킹 포즈 자료', '5앵글'],
-    heroSub: (n, v) => '얼굴 없는 마네킹 선화 ' + n + '가지 포즈, ' + v + '장. 정면·대각선·옆·위·아래 최대 5개 앵글이며, 대부분의 앵글에 클레이·깊이·노멀 맵도 있습니다. AI 이미지 도구에 넣으면 포즈가 고정됩니다.',
-    browse: (n) => n + '가지 포즈 보기', downloadAll: '묶음 다운로드', worksWith: '함께 쓰는 도구',
+    heroSub: (n: number, v: string) => '얼굴 없는 마네킹 선화 ' + n + '가지 포즈, ' + v + '장. 정면·대각선·옆·위·아래 최대 5개 앵글이며, 대부분의 앵글에 클레이·깊이·노멀 맵도 있습니다. AI 이미지 도구에 넣으면 포즈가 고정됩니다.',
+    browse: (n: number) => n + '가지 포즈 보기', downloadAll: '묶음 다운로드', worksWith: '함께 쓰는 도구',
     allTitle: '전체 포즈', all: '전체', angleAll: '전체 앵글',
     series: { all: '전체 시리즈', std: '전신・표준', sexy: '전신・섹시', upper: '상반신', duo: '2인' }, seriesLabel: '시리즈',
     adultOn: '섹시 포즈: 표시', adultOff: '섹시 포즈: 흐림', adultHint: '전신 섹시·2인 시리즈와 상반신의 섹시·가슴 강조 분류는 기본으로 흐리게 표시됩니다. 하나씩 탭해서 보거나 여기서 모두 표시할 수 있습니다',
-    veilTap: '탭하여 표시', veilShow: (id) => id + ' 표시', veilTitle: '섹시 포즈 · 흐림', veilOne: '이 포즈 표시', veilAll: '모두 표시', nudge: (n) => n + '개를 하나씩 표시 중',
+    veilTap: '탭하여 표시', veilShow: (id: string) => id + ' 표시', veilTitle: '섹시 포즈 · 흐림', veilOne: '이 포즈 표시', veilAll: '모두 표시', nudge: (n: number) => n + '개를 하나씩 표시 중',
     cats: ['앉기', '서기', '무릎 꿇기', '눕기', '옆 앉기', '쪼그려 앉기', '숙이기', '젖히기', '비틀기'],
     angle: '앵글', medium: '소재', view: '보기',
     line: '선화', photo: '실사', compare: '비교', byPose: '포즈별', single: '한 장씩',
-    countPoses: (n, all) => n + ' / ' + all + ' 포즈', countImages: (n) => n + '장',
+    countPoses: (n: number, all: number) => n + ' / ' + all + ' 포즈', countImages: (n: number) => n + '장',
     hasPhoto: '실사 포함',
     clay: '클레이', depth: '깊이', normal: '노멀', overlay: '선화 비교',
     fmtNote: { clay: '회색 마네킹으로 입체감과 명암이 있습니다. 선화처럼 참고 이미지로 바로 쓸 수 있습니다.', depth: '깊이 맵(흰색이 가까움). ComfyUI 등의 ControlNet Depth용이며 마네킹 체형이 반영됩니다.', normal: '노멀 맵(색이 표면 방향을 나타냄). ControlNet Normal용이며 마네킹 체형이 반영됩니다.' },
     gapLine: '지금 그리는 중이에요', gapLineSub: '먼저 다른 앵글을 보세요', gapLineShort: '그리는 중',
-    gapPhoto: '아직 실사가 없어요', gapPhotoSub: '이 앵글은 선화로 보세요', gapPhotoShort: '실사 없음', gapMap: (f) => f + ' 없음', overview: '모든 형식', allShort: '전체', retry: '다시 시도', saveAngle: '이 앵글 저장', howSave: '저장 방법', saveFmt: (f) => f + ' 저장', holdMany: '이 브라우저는 여러 장을 한 번에 저장할 수 없어요. 이미지를 눌러 크게 본 뒤 길게 눌러 "이미지 저장"을 고르세요.', overviewNote: '이 앵글의 모든 형식입니다. 눌러서 크게 보세요.', gapOther: '먼저 다른 앵글을 보세요',
-    goView: (v) => v + ' 보기', goLine: '선화 보기', goPhoto: '실사 보기',
+    gapPhoto: '아직 실사가 없어요', gapPhotoSub: '이 앵글은 선화로 보세요', gapPhotoShort: '실사 없음', gapMap: (f: string) => f + ' 없음', overview: '모든 형식', allShort: '전체', retry: '다시 시도', saveAngle: '이 앵글 저장', howSave: '저장 방법', saveFmt: (f: string) => f + ' 저장', holdMany: '이 브라우저는 여러 장을 한 번에 저장할 수 없어요. 이미지를 눌러 크게 본 뒤 길게 눌러 "이미지 저장"을 고르세요.', overviewNote: '이 앵글의 모든 형식입니다. 눌러서 크게 보세요.', gapOther: '먼저 다른 앵글을 보세요',
+    goView: (v: string) => v + ' 보기', goLine: '선화 보기', goPhoto: '실사 보기',
     empty: '일치하는 포즈가 없습니다', cols2: '2열', cols3: '3열', prevPose: '이전 포즈', nextPose: '다음 포즈', details: '상세',
-    close: '닫기', prevAngle: '이전 앵글', nextAngle: '다음 앵글', open: (id) => id + ' 크게 보기',
+    close: '닫기', prevAngle: '이전 앵글', nextAngle: '다음 앵글', open: (id: string) => id + ' 크게 보기',
     download: '이 이미지 다운로드', saveAlbum: '사진에 저장', holdToSave: '이미지를 길게 눌러 「저장」을 선택하세요', preparing: '이미지를 준비 중입니다. 잠시 후 다시 눌러 주세요', copyId: 'ID 복사', fullZip: '묶음 다운로드',
-    dlRec: '추천', dlAll: '전체 시리즈', dlLine: '선화 · 전체 시리즈', dlLineSub: (n) => n + '가지 포즈 · 5개 앵글. 대부분은 이것만 있으면 됩니다.', dlComplete: '모든 형식 · 한 번에',
-    dlMaps: (n) => '새 형식만 (전체 시리즈, ' + n + '개 앵글)', dlMapSub: { clay: '명암이 있는 회색 마네킹, 참고 이미지로 바로', depth: 'ControlNet Depth용', normal: 'ControlNet Normal용' },
-    dlBySeries: '시리즈 하나만 (선화 + 실사)', dlSets: (n) => n + '가지 포즈', dlPhotoNote: '실사는 전신・표준의 일부 포즈에만 있습니다.',
+    dlRec: '추천', dlAll: '전체 시리즈', dlLine: '선화 · 전체 시리즈', dlLineSub: (n: number) => n + '가지 포즈 · 5개 앵글. 대부분은 이것만 있으면 됩니다.', dlComplete: '모든 형식 · 한 번에',
+    dlMaps: (n: number) => '새 형식만 (전체 시리즈, ' + n + '개 앵글)', dlMapSub: { clay: '명암이 있는 회색 마네킹, 참고 이미지로 바로', depth: 'ControlNet Depth용', normal: 'ControlNet Normal용' },
+    dlBySeries: '시리즈 하나만 (선화 + 실사)', dlSets: (n: number) => n + '가지 포즈', dlPhotoNote: '실사는 전신・표준의 일부 포즈에만 있습니다.',
     dlOriginalAll: '원본 묶음 · 선화 + 실사, 원본 크기', dlOriginalSub: '인쇄나 확대용. 클레이·깊이·노멀은 원래 900 px이라 원본이 없습니다.', dlLicense: '이미지 CC0 · 장당 900 px, 참고용으로 충분',
     keys: '← → 앵글　↑ ↓ 포즈　L 소재 전환　Esc 뒤로·닫기',
     terms: '주의사항',
@@ -153,81 +200,84 @@ window.I18N = {
 
 // The libraries that attach to a pose (docs/DESIGN.md, 素材库与搭配): costume, prop, furniture, animal, scene, light.
 // Library names, units and page meta live in I18N_PAGES.libs (the build needs them); item names come from data/.
-window.I18N_LIB = {
-  zh: {
+const libZh = {
     groups: { wear: '穿戴与手持', near: '身边', env: '环境' },
     views: { front: '正面', diag: '斜侧', side: '侧面', back: '背面', above: '俯视', below: '仰视', eye: '平视' },
-    title: (name, n, unit) => name + ' · ' + n + ' ' + unit, count: (n, all) => n + ' / ' + all,
+    title: (name: string, n: number, unit: string) => name + ' · ' + n + ' ' + unit, count: (n: number, all: number) => n + ' / ' + all,
     gender: { all: '全部', F: '女装', M: '男装', U: '中性' }, genderLabel: '性别', cat: '大类', all: '全部', viewLabel: '视角', mainView: '主视角',
-    empty: '没有找到匹配的素材', open: (id) => '打开 ' + id + ' 大图', gap: '这个视角暂缺', download: '下载这张 · 900', save: '保存到相册',
+    empty: '没有找到匹配的素材', open: (id: string) => '打开 ' + id + ' 大图', gap: '这个视角暂缺', download: '下载这张 · 900', save: '保存到相册',
     descLabel: '英文描述，可直接放进提示词', veilTitle: '性感内衣，已模糊',
     adultOn: '性感内衣：显示', adultOff: '性感内衣：模糊', adultHint: '性感内衣默认模糊；点单张可单独查看，点这里全部显示',
-    pairWith: (id) => '配上 ' + id, startWith: '用这件搭配姿势', startPose: '用这个姿势搭配', pairItems: (n) => '配上已选的 ' + n + ' 件',
-    tray: '搭配', slotPose: '姿势', pickPose: '选姿势', picking: '在挑', add: '再加一种素材', addFor: (id) => '给 ' + id + ' 再加',
-    done: '完成', hide: '收起', end: '结束搭配', group: (n) => '这一组 · ' + n + ' 件', prompt: '合成描述', change: '换', remove: (x) => '移除' + x,
-    dl: '下载', saveGroup: (n) => '保存这一组 · ' + n + ' 张', holdGroup: '长按每张图，选「保存图片」',
+    pairWith: (id: string) => '配上 ' + id, startWith: '用这件搭配姿势', startPose: '用这个姿势搭配', pairItems: (n: number) => '配上已选的 ' + n + ' 件',
+    tray: '搭配', slotPose: '姿势', pickPose: '选姿势', picking: '在挑', add: '再加一种素材', addFor: (id: string) => '给 ' + id + ' 再加',
+    done: '完成', hide: '收起', end: '结束搭配', group: (n: number) => '这一组 · ' + n + ' 件', prompt: '合成描述', change: '换', remove: (x: string) => '移除' + x,
+    dl: '下载', saveGroup: (n: number) => '保存这一组 · ' + n + ' 张', holdGroup: '长按每张图，选「保存图片」',
     bandEyebrow: '素材库', bandTitle: '给姿势配上衣服、道具和场景', bandSub: '六个素材库都挂在姿势上：在姿势大图里点「用这个姿势搭配」，或者先来这里挑。',
-    bandCount: (n, v) => n + ' 件 · ' + v + ' 张',
-    menu: '菜单', poseSets: (n) => n + ' 套', libsLabel: '素材库 · 配到姿势上用', libsCrumb: '素材库',
+    bandCount: (n: number, v: string) => n + ' 件 · ' + v + ' 张',
+    menu: '菜单', poseSets: (n: number) => n + ' 套', libsLabel: '素材库 · 配到姿势上用', libsCrumb: '素材库',
     keys: '← → 换视角　↑ ↓ 换一件　Esc 关闭'
-  },
+  };
+export type LibStrings = typeof libZh;
+
+export const I18N_LIB: Record<Loc, LibStrings> = {
+  zh: libZh,
   ja: {
     groups: { wear: '身につける・持つ', near: 'そばに', env: '環境' },
     views: { front: '正面', diag: '斜め', side: '横', back: '背面', above: '上から', below: '下から', eye: '目線' },
-    title: (name, n, unit) => name + ' · ' + n + ' ' + unit, count: (n, all) => n + ' / ' + all,
+    title: (name: string, n: number, unit: string) => name + ' · ' + n + ' ' + unit, count: (n: number, all: number) => n + ' / ' + all,
     gender: { all: 'すべて', F: 'レディース', M: 'メンズ', U: 'ユニセックス' }, genderLabel: '性別', cat: 'カテゴリ', all: 'すべて', viewLabel: 'アングル', mainView: 'メイン',
-    empty: '該当する素材がありません', open: (id) => id + ' を拡大', gap: 'このアングルは準備中', download: 'この画像をダウンロード · 900', save: '写真に保存',
+    empty: '該当する素材がありません', open: (id: string) => id + ' を拡大', gap: 'このアングルは準備中', download: 'この画像をダウンロード · 900', save: '写真に保存',
     descLabel: '英語の説明（プロンプトにそのまま使えます）', veilTitle: 'セクシーランジェリー（ぼかし中）',
     adultOn: 'ランジェリー：表示', adultOff: 'ランジェリー：ぼかし', adultHint: 'ランジェリーは初期状態でぼかしています。1 点ずつタップで表示、ここで全部表示できます',
-    pairWith: (id) => id + ' に合わせる', startWith: 'これでポーズを選ぶ', startPose: 'このポーズで組み合わせる', pairItems: (n) => '選んだ ' + n + ' 点を合わせる',
-    tray: 'コーデ', slotPose: 'ポーズ', pickPose: 'ポーズを選ぶ', picking: '選択中', add: '素材を追加', addFor: (id) => id + ' に追加',
-    done: '完成', hide: '閉じる', end: 'コーデを終了', group: (n) => 'この組み合わせ · ' + n + ' 点', prompt: '合成プロンプト', change: '変更', remove: (x) => x + 'を外す',
-    dl: '保存', saveGroup: (n) => 'まとめて保存 · ' + n + ' 枚', holdGroup: '各画像を長押しして「画像を保存」',
+    pairWith: (id: string) => id + ' に合わせる', startWith: 'これでポーズを選ぶ', startPose: 'このポーズで組み合わせる', pairItems: (n: number) => '選んだ ' + n + ' 点を合わせる',
+    tray: 'コーデ', slotPose: 'ポーズ', pickPose: 'ポーズを選ぶ', picking: '選択中', add: '素材を追加', addFor: (id: string) => id + ' に追加',
+    done: '完成', hide: '閉じる', end: 'コーデを終了', group: (n: number) => 'この組み合わせ · ' + n + ' 点', prompt: '合成プロンプト', change: '変更', remove: (x: string) => x + 'を外す',
+    dl: '保存', saveGroup: (n: number) => 'まとめて保存 · ' + n + ' 枚', holdGroup: '各画像を長押しして「画像を保存」',
     bandEyebrow: '素材ライブラリ', bandTitle: 'ポーズに衣装・小物・背景を', bandSub: '6 つのライブラリはすべてポーズにつながります。ポーズの拡大表示で「このポーズで組み合わせる」を押すか、ここから選んでください。',
-    bandCount: (n, v) => n + ' 点 · ' + v + ' 枚',
-    menu: 'メニュー', poseSets: (n) => n + ' ポーズ', libsLabel: '素材ライブラリ · ポーズに合わせて', libsCrumb: '素材',
+    bandCount: (n: number, v: string) => n + ' 点 · ' + v + ' 枚',
+    menu: 'メニュー', poseSets: (n: number) => n + ' ポーズ', libsLabel: '素材ライブラリ · ポーズに合わせて', libsCrumb: '素材',
     keys: '← → アングル　↑ ↓ 前後の素材　Esc 閉じる'
   },
   en: {
     groups: { wear: 'Worn and held', near: 'Beside', env: 'Surroundings' },
     views: { front: 'Front', diag: '3/4', side: 'Side', back: 'Back', above: 'Above', below: 'Below', eye: 'Eye level' },
-    title: (name, n) => name + ' · ' + n, count: (n, all) => n + ' / ' + all,
+    title: (name: string, n: number) => name + ' · ' + n, count: (n: number, all: number) => n + ' / ' + all,
     gender: { all: 'All', F: 'Women', M: 'Men', U: 'Unisex' }, genderLabel: 'Gender', cat: 'Category', all: 'All', viewLabel: 'View', mainView: 'Main view',
-    empty: 'Nothing matches', open: (id) => 'Open ' + id, gap: 'This view is not ready yet', download: 'Download · 900', save: 'Save to Photos',
+    empty: 'Nothing matches', open: (id: string) => 'Open ' + id, gap: 'This view is not ready yet', download: 'Download · 900', save: 'Save to Photos',
     descLabel: 'English description, ready for a prompt', veilTitle: 'Lingerie, blurred',
     adultOn: 'Lingerie: shown', adultOff: 'Lingerie: blurred', adultHint: 'Lingerie is blurred by default; tap one to see it, or show them all here',
-    pairWith: (id) => 'Pair with ' + id, startWith: 'Find a pose for this', startPose: 'Build a set on this pose', pairItems: (n) => 'Pair with the ' + n + ' picked',
-    tray: 'Set', slotPose: 'Pose', pickPose: 'Pick a pose', picking: 'picking', add: 'Add another library', addFor: (id) => 'Add to ' + id,
-    done: 'Done', hide: 'Hide', end: 'End this set', group: (n) => 'This set · ' + n, prompt: 'Combined prompt', change: 'Change', remove: (x) => 'Remove ' + x,
-    dl: 'Download', saveGroup: (n) => 'Save all · ' + n, holdGroup: 'Long-press each image and choose “Save Image”',
+    pairWith: (id: string) => 'Pair with ' + id, startWith: 'Find a pose for this', startPose: 'Build a set on this pose', pairItems: (n: number) => 'Pair with the ' + n + ' picked',
+    tray: 'Set', slotPose: 'Pose', pickPose: 'Pick a pose', picking: 'picking', add: 'Add another library', addFor: (id: string) => 'Add to ' + id,
+    done: 'Done', hide: 'Hide', end: 'End this set', group: (n: number) => 'This set · ' + n, prompt: 'Combined prompt', change: 'Change', remove: (x: string) => 'Remove ' + x,
+    dl: 'Download', saveGroup: (n: number) => 'Save all · ' + n, holdGroup: 'Long-press each image and choose “Save Image”',
     bandEyebrow: 'Library', bandTitle: 'Dress, prop and place your pose', bandSub: 'All six libraries attach to a pose: open one and tap “Build a set on this pose”, or start here.',
-    bandCount: (n, v) => n + ' items · ' + v + ' images',
-    menu: 'Menu', poseSets: (n) => n + ' poses', libsLabel: 'Library · to pair with a pose', libsCrumb: 'Library',
+    bandCount: (n: number, v: string) => n + ' items · ' + v + ' images',
+    menu: 'Menu', poseSets: (n: number) => n + ' poses', libsLabel: 'Library · to pair with a pose', libsCrumb: 'Library',
     keys: '← → view　↑ ↓ item　Esc close'
   },
   ko: {
     groups: { wear: '입고 드는 것', near: '곁에', env: '환경' },
     views: { front: '정면', diag: '사선', side: '측면', back: '뒷면', above: '부감', below: '앙각', eye: '눈높이' },
-    title: (name, n, unit) => name + ' · ' + n + unit, count: (n, all) => n + ' / ' + all,
+    title: (name: string, n: number, unit: string) => name + ' · ' + n + unit, count: (n: number, all: number) => n + ' / ' + all,
     gender: { all: '전체', F: '여성', M: '남성', U: '공용' }, genderLabel: '성별', cat: '분류', all: '전체', viewLabel: '앵글', mainView: '기본 앵글',
-    empty: '조건에 맞는 소재가 없습니다', open: (id) => id + ' 크게 보기', gap: '이 앵글은 준비 중', download: '이 이미지 다운로드 · 900', save: '사진에 저장',
+    empty: '조건에 맞는 소재가 없습니다', open: (id: string) => id + ' 크게 보기', gap: '이 앵글은 준비 중', download: '이 이미지 다운로드 · 900', save: '사진에 저장',
     descLabel: '영어 설명 (프롬프트에 바로 사용)', veilTitle: '란제리, 흐림 처리됨',
     adultOn: '란제리: 표시', adultOff: '란제리: 흐림', adultHint: '란제리는 기본으로 흐리게 표시됩니다. 하나씩 눌러 보거나 여기서 모두 표시하세요',
-    pairWith: (id) => id + '에 맞추기', startWith: '이걸로 포즈 고르기', startPose: '이 포즈로 조합하기', pairItems: (n) => '고른 ' + n + '개 맞추기',
-    tray: '조합', slotPose: '포즈', pickPose: '포즈 고르기', picking: '고르는 중', add: '소재 더하기', addFor: (id) => id + '에 더하기',
-    done: '완료', hide: '접기', end: '조합 끝내기', group: (n) => '이 조합 · ' + n + '개', prompt: '합성 프롬프트', change: '바꾸기', remove: (x) => x + ' 빼기',
-    dl: '저장', saveGroup: (n) => '모두 저장 · ' + n + '장', holdGroup: '각 이미지를 길게 눌러 「이미지 저장」',
+    pairWith: (id: string) => id + '에 맞추기', startWith: '이걸로 포즈 고르기', startPose: '이 포즈로 조합하기', pairItems: (n: number) => '고른 ' + n + '개 맞추기',
+    tray: '조합', slotPose: '포즈', pickPose: '포즈 고르기', picking: '고르는 중', add: '소재 더하기', addFor: (id: string) => id + '에 더하기',
+    done: '완료', hide: '접기', end: '조합 끝내기', group: (n: number) => '이 조합 · ' + n + '개', prompt: '합성 프롬프트', change: '바꾸기', remove: (x: string) => x + ' 빼기',
+    dl: '저장', saveGroup: (n: number) => '모두 저장 · ' + n + '장', holdGroup: '각 이미지를 길게 눌러 「이미지 저장」',
     bandEyebrow: '소재 라이브러리', bandTitle: '포즈에 옷·소품·배경을', bandSub: '여섯 라이브러리는 모두 포즈에 붙습니다. 포즈를 크게 열고 「이 포즈로 조합하기」를 누르거나 여기서 먼저 고르세요.',
-    bandCount: (n, v) => n + '개 · ' + v + '장',
-    menu: '메뉴', poseSets: (n) => n + '세트', libsLabel: '소재 라이브러리 · 포즈에 맞춰', libsCrumb: '소재',
+    bandCount: (n: number, v: string) => n + '개 · ' + v + '장',
+    menu: '메뉴', poseSets: (n: number) => n + '세트', libsLabel: '소재 라이브러리 · 포즈에 맞춰', libsCrumb: '소재',
     keys: '← → 앵글　↑ ↓ 이전·다음　Esc 닫기'
   }
 };
 
 // Strings shared with the build: tools/build_site.py reads this block with json.loads to write the static pages
 // (pose pages, changelog, 404) and their meta tags, so keep it strict JSON between the two marker lines.
-// {name}-style slots are filled at build time or by common.js.
-window.I18N_PAGES = // BEGIN-JSON
+// {name}-style slots are filled at build time or by common.ts.
+const PAGES = // BEGIN-JSON
 {
   "zh": {
     "langName": "中文", "langShort": "中", "ogLocale": "zh_CN",
@@ -408,5 +458,16 @@ window.I18N_PAGES = // BEGIN-JSON
 }
 // END-JSON
 ;
-// The gallery reads both tables through one object per language.
-if (window.I18N) for (const k in window.I18N_PAGES) Object.assign(window.I18N[k], window.I18N_PAGES[k]);
+
+// Share networks differ per language (Weibo for zh, LINE for ja / ko, Reddit for en), so nets is an open map.
+export type PageStrings = Omit<typeof PAGES.zh, 'nets'> & { nets: Record<string, string> };
+export const I18N_PAGES: Record<Loc, PageStrings> = PAGES;
+
+/** The gallery reads both tables through one object per language. */
+export type Strings = UIStrings & PageStrings;
+export const I18N: Record<Loc, Strings> = {
+  zh: { ...I18N_UI.zh, ...I18N_PAGES.zh },
+  ja: { ...I18N_UI.ja, ...I18N_PAGES.ja },
+  en: { ...I18N_UI.en, ...I18N_PAGES.en },
+  ko: { ...I18N_UI.ko, ...I18N_PAGES.ko }
+};

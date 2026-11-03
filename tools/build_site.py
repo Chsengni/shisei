@@ -6,13 +6,18 @@ page per general-rated library item (<lib>/<ID>/), the changelog and its Atom fe
 ones on the image host with --media), sitemap.xml, robots.txt, 404.html, manifest and icons. Fails on a bad changelog entry,
 a page without its share tags, or a relative link that points nowhere.
 
-Usage: python3 tools/build_site.py [--site URL] [--repo URL] [--link-images] [--no-og] [--out site]
+Scripts and styles come from the Vite build (package.json: npm ci && npm run build → web/dist/ and its manifest);
+every page gets <!--vite:<entry>:<rel>--> in its template and this script writes the hashed tags there.
+
+Usage: python3 tools/build_site.py [--site URL] [--repo URL] [--link-images] [--no-og] [--out site] [--vite-dev URL]
 --site          absolute URL the site is served from (canonical, og:image, sitemap); default $SHISEI_SITE_URL or
                 the GitHub Pages address, see docs/DECISIONS.md D-05
 --link-images   symlink images/ instead of copying (fast local preview)
 --no-og         skip rendering share cards (no Chrome needed); og:image falls back to the pose's front line art
 --public        the public deploy: the series in PUBLIC_SERIES, line art and photo renders that passed QC; only the files
                 the catalog lists are copied (DECISIONS D-03, D-06)
+--vite-dev URL  point the pages at a running `npm run dev` (e.g. http://localhost:5173) instead of web/dist
+--media URL     library images from that host (a second static project, or any mirror with the same images/ paths)
 """
 import argparse, datetime, hashlib, json, os, pathlib, re, shutil, subprocess, sys
 from html.parser import HTMLParser
@@ -33,8 +38,8 @@ def version() -> str:
 
 
 def strings():
-    """The strict-JSON block in web/i18n.js (window.I18N_PAGES), so page strings live in one place with the UI's."""
-    s = (ROOT / "web/i18n.js").read_text()
+    """The strict-JSON block in web/src/i18n.ts (I18N_PAGES), so page strings live in one place with the UI's."""
+    s = (ROOT / "web/src/i18n.ts").read_text()
     return json.loads(s.split("// BEGIN-JSON", 1)[1].split("// END-JSON", 1)[0])
 
 
@@ -275,45 +280,65 @@ def check_site(out, site, media=None):
     return bad
 
 
-# Cloudflare Pages response headers. Scripts and styles ship as assets/<name>.<content hash>.<ext>: the hash lives in
-# the file name, not a ?v= query, because Pages ignores the query when it looks up a file. With ?v=, an edge still on
-# the previous deployment answered the new URL with the old script, and the zone cache kept that for a year (a blank
-# gallery on 2026-10-29). A hashed name the old deployment lacks cannot be filled with old code, so only assets/ is
-# immutable; the unhashed copies stay for HTML cached before the switch and revalidate like pages. Image names stay
-# the same when a view is redrawn, so images get a week plus background revalidation rather than immutable.
-HEADERS = """/assets/*
+# Cloudflare Pages (and Vercel, vercel.json) response headers. Scripts, styles and fonts ship from Vite as
+# assets/<name>-<content hash>.<ext>: the hash lives in the file name, not a ?v= query, because Pages ignores the query
+# when it looks up a file (with ?v= an edge still on the previous deployment once answered the new URL with the old
+# script, and the zone cache kept that for a year: a blank gallery on 2026-10-29). A hashed name the old deployment
+# lacks cannot be filled with old code, so assets/ is immutable for a year.
+# Images get 30 days immutable, matching the service worker's image cache (web/sw/sw.ts). Image names stay the same
+# when a view is redrawn, so a redraw reaches returning readers only after their copy expires; rename the cache in
+# sw.ts (shisei-images-v1 → v2) with a redraw that must show at once. sw.js itself must always revalidate, or a fixed
+# worker would never reach anyone.
+IMAGE_CACHE = "public, max-age=2592000, immutable"
+HEADERS = f"""/assets/*
   Cache-Control: public, max-age=31536000, immutable
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 /images/*
-  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Cache-Control: {IMAGE_CACHE}
 /og/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=86400
+/sw.js
+  Cache-Control: no-cache
 """
-STAMPED = ("app.css", "app.js", "common.js", "i18n.js", "tray.js", "library.js")
 # The image host (a second Pages project) answers the tray's fetch() for the phone share sheet, so it allows any origin.
-MEDIA_HEADERS = """/images/*
+MEDIA_HEADERS = f"""/images/*
   Access-Control-Allow-Origin: *
-  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Cache-Control: {IMAGE_CACHE}
 /og/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=86400
 """
 
+# ---- Vite output (web/dist): the entries every page kind loads, read from the build manifest
+DIST = ROOT / "web/dist"
+ENTRIES = {"gallery": "src/entries/gallery.ts", "library": "src/entries/library.ts", "page": "src/entries/page.ts"}
+STYLE = "src/styles/app.css"
+FONT = "fonts/inter-tight-latin.woff2"
+VITE_MARK = re.compile(r"<!--vite:(\w+):([^>]*?)-->")
 
-def stamp_assets(out, ver):
-    """Copy each asset to assets/<stem>.<content hash><ext> and point every page's name?v=<release> reference at it."""
-    (out / "assets").mkdir(exist_ok=True)
-    pages = list(out.rglob("*.html"))
-    for name in STAMPED:
-        data = (out / name).read_bytes()
-        stem, ext = os.path.splitext(name)
-        hashed = f"{stem}.{hashlib.sha256(data).hexdigest()[:10]}{ext}"
-        (out / "assets" / hashed).write_bytes(data)
-        pat = re.compile(re.escape(name) + r"\?v=" + re.escape(ver) + r"(?=\")")
-        for f in pages:
-            doc = f.read_text()
-            if name in doc:
-                f.write_text(pat.sub("assets/" + hashed, doc))
+
+def vite_manifest():
+    f = DIST / ".vite/manifest.json"
+    if not f.exists():
+        sys.exit("web/dist/.vite/manifest.json is missing: run `npm ci && npm run build` first (README, Development)")
+    return json.loads(f.read_text())
+
+
+def vite_tags(kind, rel, man, dev=None):
+    """The tags for one <!--vite:kind:rel--> marker: 'head' is the font preload and the stylesheet, the others one
+    module entry with modulepreload hints for the chunks it imports (so they load in parallel, not one by one)."""
+    if dev:
+        if kind == "head":
+            return f'<script type="module" src="{dev}/@vite/client"></script>\n<script type="module" src="{dev}/{STYLE}"></script>'
+        return f'<script type="module" src="{dev}/{ENTRIES[kind]}"></script>'
+    if kind == "head":
+        return (f'<link rel="preload" href="{rel}{man[FONT]["file"]}" as="font" type="font/woff2" crossorigin>\n'
+                f'<link rel="stylesheet" href="{rel}{man[STYLE]["file"]}">')
+    if kind not in ENTRIES:
+        sys.exit(f"unknown vite marker <!--vite:{kind}-->")
+    e = man[ENTRIES[kind]]
+    pre = "".join(f'<link rel="modulepreload" href="{rel}{man[k]["file"]}">\n' for k in e.get("imports", []))
+    return f'{pre}<script type="module" src="{rel}{e["file"]}"></script>'
 
 
 def main() -> None:
@@ -326,8 +351,11 @@ def main() -> None:
     ap.add_argument("--public", action="store_true")
     ap.add_argument("--media", default="", help="absolute URL of the image host for the libraries (DESIGN.md)")
     ap.add_argument("--media-out", default="site-media")
+    ap.add_argument("--vite-dev", default="", help="URL of a running Vite dev server (npm run dev)")
     args = ap.parse_args()
     site_url = args.site.rstrip("/")
+    vite_dev = args.vite_dev.rstrip("/")
+    man = None if vite_dev else vite_manifest()
 
     out = ROOT / args.out
     if out.is_symlink() or out.is_file():
@@ -360,7 +388,7 @@ def main() -> None:
         for k in ("metaTitle", "metaDesc", "ogLine"):
             T[k] = fill(T[k], n=stats["sets"], views=f"{stats['views']:,}", views_round=stats["views_round"])
             if re.search(r"\{\w+\}", T[k]):
-                sys.exit(f"web/i18n.js {k}: unfilled placeholder in {T[k]!r}")
+                sys.exit(f"web/src/i18n.ts {k}: unfilled placeholder in {T[k]!r}")
 
     # Share cards first: pages point at them only when they exist.
     chrome = None if args.no_og else og_cards.find_chrome()
@@ -458,8 +486,14 @@ def main() -> None:
     for f in (ROOT / "web").iterdir():
         if f.is_file() and f.name not in ("index.html", "library.html", "changelog.yaml"):
             shutil.copy2(f, out / f.name)
-    # Self-hosted Latin font subsets and their OFL licences (docs/LICENSING.md).
+    # Self-hosted Latin font subsets and their OFL licences (docs/LICENSING.md); the stylesheet uses the hashed
+    # copies Vite put in assets/.
     shutil.copytree(ROOT / "web/fonts", out / "fonts")
+    # Vite output: hashed scripts, styles and fonts, and the service worker at the root so its scope is the site.
+    if (DIST / "assets").exists():
+        shutil.copytree(DIST / "assets", out / "assets")
+    if (DIST / "sw.js").exists():
+        shutil.copy2(DIST / "sw.js", out / "sw.js")
     (out / "catalog.json").write_text(json.dumps(catalog, ensure_ascii=False, indent=1) + "\n")
     for lib, D in libs.items():
         (out / f"{LIBS[lib]['data']}.json").write_text(json.dumps(D, ensure_ascii=False, indent=1) + "\n")
@@ -524,15 +558,19 @@ def main() -> None:
                                                     D["kind"], D["dir"]), croot / f"og/{loc}/{c['id']}.png", 1200, 630))
         fresh = og_cards.render(jobs, chrome)
         print(f"library share cards: {len(jobs)} ({fresh} rendered, {len(jobs) - fresh} cached) in {croot.relative_to(ROOT)}/og")
+    # Script and style tags from the Vite manifest at each <!--vite:…--> marker. Pages with scripts also get the menu
+    # and tray data, and where library images live, just before their entry script.
+    def tags(m):
+        kind, rel = m.group(1), m.group(2)
+        out_tags = vite_tags(kind, rel, man, vite_dev)
+        if kind == "head":
+            return out_tags
+        data = dict(nav, root=rel, media=media or rel)
+        return "<script>window.SHISEI_NAV = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";</script>\n" + out_tags
     for f in out.rglob("*.html"):
         doc = f.read_text()
-        m = re.search(r'<script src="([./]*)i18n\.js', doc)
-        if not m:
-            continue
-        rel = m.group(1)
-        data = dict(nav, root=rel, media=media or rel)
-        tag = "<script>window.SHISEI_NAV = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";</script>\n"
-        f.write_text(doc[:m.start()] + tag + doc[m.start():])
+        if "<!--vite:" in doc:
+            f.write_text(VITE_MARK.sub(tags, doc))
     icons = [{"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml"}]
     if chrome:
         icons += [{"src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
@@ -541,7 +579,6 @@ def main() -> None:
         "name": "Shisei 姿勢", "short_name": "Shisei", "start_url": "./", "scope": "./", "display": "standalone",
         "background_color": "#F5F2ED", "theme_color": "#F5F2ED", "icons": icons}, ensure_ascii=False, indent=1))
     (out / ".nojekyll").write_text("")  # GitHub Pages: serve files as they are
-    stamp_assets(out, ver)
     (out / "_headers").write_text(HEADERS)
 
     # sitemap.xml with hreflang alternates and the line art as image entries; robots.txt

@@ -12,3 +12,7 @@
 /.wrangler/
 __pycache__/
 site-media/
+# frontend toolchain: dependencies and the Vite output build_site.py reads (npm ci && npm run build)
+/node_modules/
+/web/dist/
+/.vercel/
