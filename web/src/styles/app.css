@@ -1,0 +1,61 @@
+/* Stylesheet entry (Vite + Tailwind CSS v4). Layer order: Tailwind theme, then our base, then the gallery's
+   components, then Tailwind utilities, so a utility class always wins over a component rule.
+   Tailwind's preflight reset is left out on purpose: base.css already sets the few resets the design relies on, and
+   preflight would restyle headings, lists, dialogs and buttons across three page types that were designed without it. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@import "./tokens.css";
+@import "./base.css" layer(base);
+@import "./components.css" layer(components);
+
+/* Only the files that hold markup: scanning the repo root would read data/ (megabytes of JSON). */
+@source "../**/*.ts";
+@source "../../index.html";
+@source "../../library.html";
+@source "../../../tools/site_pages.py";
+
+/* The design tokens of docs/DESIGN.md as Tailwind theme values. They point at the CSS variables in tokens.css, which
+   switch for dark mode, so bg-card / text-ink / border-line follow the theme without a dark: variant. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-field: var(--field);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-ink3: var(--ink3);
+  --color-ink4: var(--ink4);
+  --color-accent: var(--accent);
+  --color-mark: var(--mark);
+  --color-new: var(--new);
+  --color-btn: var(--btn);
+  --color-btn-ink: var(--btn-ink);
+  --color-tile: var(--tile);
+  /* Category tints (cards, marquee, dots). */
+  --color-cat-sitting: #D3D1E6;
+  --color-cat-standing: #AFC3E0;
+  --color-cat-kneeling: #BCD3C6;
+  --color-cat-lying: #E3CBB0;
+  --color-cat-sidesit: #EBC0BC;
+  --color-cat-squat: #C7DCD6;
+  --color-cat-lean: #E6B7A1;
+  --color-cat-arch: #CBD0AC;
+  --color-cat-twist: #DDB9C8;
+  --font-sans: var(--f);
+  --font-mono: var(--mono);
+  --radius-card: 28px;
+  --radius-card-sm: 22px;
+  --radius-lightbox: 34px;
+  --shadow-title: 3px 4px 0 var(--shadow);
+}
+
+/* The site's dark mode is the system setting unless the reader picked one (<html data-theme>). */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]) *) { @slot; }
+  }
+  &:where([data-theme="dark"] *) { @slot; }
+}

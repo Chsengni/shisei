@@ -42,8 +42,8 @@ python3 tools/build_images.py std=~/path/to/std-source-set …  # (re)build w300
 3. **Images**: only the `w300`, `w600` and `w900` tiers are committed, built by `tools/build_images.py` (metadata stripped), and only for views with a QC `pass` in `data/qc.json` ([docs/qc/](docs/qc/README.md)).
    Full-size originals ship in the Release zip. Image rebuilds go in their own commit.
 4. **Web changes** follow [docs/DESIGN.md](docs/DESIGN.md), include a screenshot, work at 390×844 without horizontal
-   scroll, and add every user-visible string to `web/i18n.js` in all four languages. Check with
-   `node --check web/app.js web/i18n.js`.
+   scroll, and add every user-visible string to `web/src/i18n.ts` in all four languages. Check with
+   `npm ci && npm run typecheck && npm run build`.
 5. **A CHANGELOG line** under `[Unreleased]` for every user-visible change.
 6. **Code style**: comments in English, explaining why. No runtime dependencies in the gallery.
 

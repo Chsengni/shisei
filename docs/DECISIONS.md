@@ -126,7 +126,7 @@ comfyui-digi 交付 66 套重画（风格略有不同：蛋形头、结构线、
   或用「性感内容」开关全部显示，开关记在 localStorage。
   原先定的是默认显示；同日人改为默认隐藏：首访（从 README 或分享链接进来）只看到 general 姿势，降低被举报和工作场合打开的风险。
   同日人再改为模糊：隐藏后 280 套里 173 套不见了，系列标签只剩几套，读者发现不了开关；模糊保住首访不露内容，又让系列和数量都摆在明面上。
-  默认值在 `web/app.js` 顶部 `SHOW_SUGGESTIVE_DEFAULT`。
+  默认值在 `web/src/gallery.ts` 顶部 `SHOW_SUGGESTIVE_DEFAULT`。
 - suggestive 姿势不进首屏滚动方块、静态姿势页、分享卡和 sitemap。
 - 公开站 `--public` 只发 `tools/build_site.py` 里 `PUBLIC_SERIES` 列出的系列；新系列要人点头后再加进去（AGENTS §8）。
 

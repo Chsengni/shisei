@@ -74,9 +74,14 @@ images/costume/      costume views: grey/{w300,w600,w900}/ on #D9D9D9 (D-10; no 
                      costume_<ID>_<view>.webp; QC in data/costume-qc.json from data/costume-qc-input/
 images/{prop,furniture}/   grey/{w300,w600,w900}/ on #D9D9D9, as costumes
 images/{scene,light,animal}/   plain/{w300,w600,w900}/ as delivered (pose tier quality); <lib>_<ID>_<view>.webp
-web/                 gallery source: index.html template, app.js, app.css, i18n.js, common.js (share sheet, copy,
-                     language links), favicon.svg, changelog.yaml (reader-facing changelog, four languages), fonts/ (self-hosted
-                     Latin subsets of Inter Tight and JetBrains Mono with their OFL files; CJK uses system fonts)
+web/                 gallery source: index.html and library.html templates, src/ (TypeScript, strict: gallery.ts,
+                     library.ts, tray.ts, common.ts = share sheet, copy, menu, album saver; i18n.ts = every UI string in four
+                     languages; agent/ = the page-agent drawer; styles/ = Tailwind CSS v4 entry, tokens, components),
+                     sw/sw.ts (image-caching service worker), favicon.svg, changelog.yaml (reader-facing changelog, four
+                     languages), fonts/ (self-hosted Latin subsets of Inter Tight and JetBrains Mono with their OFL files;
+                     CJK uses system fonts); dist/ is the Vite output (git-ignored) that build_site.py reads
+package.json, vite.config.ts, vite.sw.config.ts, tsconfig*.json   frontend toolchain (Vite + TypeScript + Tailwind)
+vercel.json          Vercel project config (npm ci, npm run build:vercel → site/)
 site/                build output of tools/build_site.py (git-ignored; deploy this): home, pose pages, library pages,
                      library item pages (<lib>/<ID>/, general only) and changelog
                      per language (zh at the root, ja/ en/ ko/), og/ share cards, sitemap, robots, 404, manifest,
@@ -96,7 +101,7 @@ docs/DECISIONS.md    open questions and decisions awaiting a human
 docs/GENERATION.md   how the sets were made, gap log
 docs/LICENSING.md    licensing rules (outside images, redistribution, AI-generated images)
 docs/logo.svg, docs/screenshot.png   README assets; retake the screenshot when the hero changes
-.github/workflows/   CI: verify.py
+.github/workflows/   CI: verify.py, npm ci, typecheck, Vite build, build_site.py
 ```
 File names are `<series>_<ID>_<view>.webp` (`std_P001_front.webp`, `upper_U001_front.webp`), identical across tiers.
 All series share `data/catalog.json`; a new series gets its own prefix and ID letter.
@@ -120,7 +125,9 @@ python3 -I tools/import_fills.py ~/Downloads/muse-fill-r1-batchNN ~/Downloads/po
                                                       # single-view fills from Muse, then QC (docs/GENERATION.md)
 python3 -I tools/import_descs.py ~/Downloads/pose-prompts-export   # desc_en from the generator's own prompts
 python3 tools/qc_merge.py data/qc-input               # apply review results (docs/qc/README.md)
+npm ci && npm run typecheck && npm run build          # frontend: web/src → web/dist (Node 20.19+); before build_site
 python3 tools/build_site.py --link-images && python3 -m http.server 8000 -d site   # preview the gallery
+npm run dev  +  python3 tools/build_site.py --link-images --no-og --vite-dev http://localhost:5173   # live-edit web/src
 python3 -I tools/build_site.py --public --site https://shisei.indaloop.app --media https://shisei-media.pages.dev/
   # deploy build (D-05): site/ to Pages project shisei, site-media/ (library images) to shisei-media; --no-og skips cards
 python3 -I tools/pack_release.py 0.2.0 std=… upper=… sexy=… duo=… digi=…   # dist/*.zip + sha256, data/packs.json
@@ -140,12 +147,15 @@ python3 -I tools/pack_release.py 0.2.0 std=… upper=… sexy=… duo=… digi=�
   description, share card and README taglines say what the library holds in all four languages, so a new format or
   count changes all of them together. Describe the maps by what they are (clay: usable as a reference image; depth and
   normal: for ControlNet) and never claim an effect nobody has tested. Every download names its contents.
-- **Web**: follow docs/DESIGN.md. Every UI string lives in `web/i18n.js` in all four languages; `index.html` placeholders
-  (`__CATALOG__`, `__REPO__`, `__VERSION__`) are filled by `build_site.py`. Zero runtime dependencies, works at 390×844 without horizontal scroll, every
+- **Web**: follow docs/DESIGN.md. Every UI string lives in `web/src/i18n.ts` in all four languages (the compiler rejects a language that
+  lacks a key of the zh table); `index.html` placeholders (`__CATALOG__`, `__REPO__`, `__VERSION__`) and the
+  `<!--vite:…-->` asset markers are filled by `build_site.py`. TypeScript strict, Tailwind utilities for new UI and the
+  DESIGN.md tokens as the Tailwind theme. One runtime dependency, page-agent (the assistant drawer), loaded with
+  import() only when the drawer opens; nothing else may ship to readers. Works at 390×844 without horizontal scroll, every
   string in all four languages, images lazy-loaded with `alt` = ID + name + view, keyboard: ← → angle, ↑ ↓ pose,
   Esc closes.
 - **Pages and SEO**: strings the build needs (page titles, share sheet, changelog) live in the strict-JSON
-  `I18N_PAGES` block at the end of `web/i18n.js`. Reader-facing updates go in `web/changelog.yaml` (all four
+  `I18N_PAGES` block (between `// BEGIN-JSON` and `// END-JSON`) at the end of `web/src/i18n.ts`. Reader-facing updates go in `web/changelog.yaml` (all four
   languages; the build audits them) as well as CHANGELOG.md. Share what has a page: pose pages, not `#P001` hashes.
   Only std / general-rated poses with a usable view get pose pages, cards and sitemap rows.
 - **Comments and docs**: code comments in English, explain why. `docs/` may be Chinese; README is English-first with

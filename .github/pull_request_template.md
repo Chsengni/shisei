@@ -6,7 +6,7 @@
 
 - [ ] `python3 -I tools/verify.py`
 - [ ] `python3 -I tools/build_site.py --link-images` and the gallery checked in a browser (web changes)
-- [ ] `node --check web/app.js web/i18n.js` (web changes)
+- [ ] `npm run typecheck && npm run build` (web changes)
 - [ ] Catalog names in ja / zh / en / ko and `desc_en` (data changes); UI strings in all four languages (web changes)
 - [ ] Web UI: screenshot attached, 390×844 checked
 - [ ] CHANGELOG line under `[Unreleased]`; image rebuilds in their own commit

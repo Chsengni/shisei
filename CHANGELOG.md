@@ -8,6 +8,14 @@ the catalog schema.
 ## [Unreleased]
 
 ### Added
+- AI assistant drawer on every page: a toggle on the right edge opens a panel that drives the page with
+  [alibaba/page-agent](https://github.com/alibaba/page-agent) (headless `PageAgentCore` + `PageController`, imported
+  only when the drawer opens) and the reader's own OpenAI-compatible endpoint. Settings (base URL, model, API key) stay
+  in localStorage; task input, run / stop, status and a step log; strings in all four languages; open state remembered.
+- Image cache: a service worker (`web/sw/sw.ts` → `sw.js`, Workbox) keeps images from `images/` and the `--media` host
+  CacheFirst (2,000 files, 30 days) and hashed assets cache-first; nothing is precached. `_headers`: images 30 days
+  immutable, `sw.js` no-cache.
+- `vercel.json`: Vercel builds the public site from git (`npm ci`, `npm run build:vercel` → `site/`).
 - Library items can be shared: the library lightbox gets Share and an item-page link. Every general-rated item has a
   page per language (`<lib>/<ID>/`, `site_pages.item_page`: views, names, prompt, previous / next, same category) with
   its own 1200×630 card, and each library page a card of its own instead of the home card (`og_cards.item_card`,
@@ -16,6 +24,12 @@ the catalog schema.
   link with its hash (D-06, D-11).
 
 ### Changed
+- Frontend moved to Vite + TypeScript (strict) + Tailwind CSS v4: `web/*.js` became typed modules in `web/src/`, the
+  stylesheet became a Tailwind entry with the DESIGN.md tokens as theme values and the existing rules in
+  `@layer components`. `build_site.py` reads the Vite manifest and writes hashed tags at `<!--vite:…-->` markers
+  (replacing its own asset stamping); CI runs `npm ci`, `npm run typecheck` and `npm run build` before it.
+- Tidier grid: the angle label shows only on the hovered / focused card, the photo badge is lighter, and sections share
+  one spacing rhythm.
 - One phone save path: the album prefetch and share-sheet save shared by the pose lightbox, the library lightbox and
   the tray now live in `common.js` (`ShiseiAlbum`) instead of three copies.
 - Hero badge split in two: the making-of thread plus a GPU referral link to UCloud Compshare (`rel="sponsored"`,
