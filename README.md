@@ -16,7 +16,7 @@ English · [简体中文](docs/readme/README.zh-CN.md) · [日本語](docs/readm
 [![Maps](https://img.shields.io/badge/clay%20·%20depth%20·%20normal-944-4A4A4A?style=flat-square)](docs/GENERATION.md)
 [![Photos](https://img.shields.io/badge/photos-89-5B616A?style=flat-square)](docs/GENERATION.md)
 [![Languages](https://img.shields.io/badge/names-ja%20·%20zh%20·%20en%20·%20ko-0aa06e?style=flat-square)](data/catalog.csv)
-[![Dependencies](https://img.shields.io/badge/runtime%20deps-0-E07A52?style=flat-square)](web)
+[![Dependencies](https://img.shields.io/badge/runtime%20deps-page--agent%20(lazy)-E07A52?style=flat-square)](package.json)
 [![Images](https://img.shields.io/badge/images-CC0--1.0-blue?style=flat-square)](LICENSE-images)
 [![Code](https://img.shields.io/badge/code-Apache--2.0-blue?style=flat-square)](LICENSE)
 
@@ -96,16 +96,29 @@ v0.4.1, the same files the gallery's download panel offers. Every zip is the 900
 
 ## Gallery
 
-`web/` is a zero-dependency static gallery built from the catalog: series tabs with categories inside a
+`web/` is a static gallery built from the catalog (TypeScript + Tailwind CSS, bundled by Vite; its only runtime
+dependency is [page-agent](https://github.com/alibaba/page-agent) for the optional AI assistant drawer, loaded only when
+the drawer is opened): series tabs with categories inside a
 series, an angle filter, a line-art / photo switch, a by-pose or single-image view, a switch that unblurs the
 suggestive series, a lightbox with keyboard and swipe navigation and a line-art / photo / compare mode, a page per
 pose, four UI languages and a dark theme. The spec is in [docs/DESIGN.md](docs/DESIGN.md).
 
 ```bash
+npm ci && npm run build                        # Vite: web/src → web/dist (hashed JS/CSS, sw.js); needs Node 20.19+
+npm run typecheck                              # strict TypeScript
 python3 tools/build_site.py --link-images      # writes site/ (images symlinked for a fast preview)
 python3 -m http.server 8000 -d site            # http://localhost:8000
 python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # deploy build with images and share cards
 ```
+
+While editing `web/src`, run `npm run dev` (Vite on :5173) and build the pages against it with
+`python3 tools/build_site.py --link-images --no-og --vite-dev http://localhost:5173`; scripts and styles then reload
+without a rebuild. `vercel.json` builds the same site on Vercel (`npm run build:vercel`).
+
+The assistant drawer (right edge) drives the page with [page-agent](https://github.com/alibaba/page-agent) and the
+reader's own OpenAI-compatible endpoint: open it, fill in Base URL, model and API key under "Model settings" (defaults are
+placeholders for Alibaba Cloud DashScope / Qwen). The key is kept in that browser's localStorage only and sent only to
+that endpoint; nothing about it is in the repo or the build.
 
 Deep links open the lightbox directly: `#P001-diag`, `#P001-diag-photo`, `#P001-diag-compare`; filters live in the
 query string (`?lang=ja&series=std&cat=5&angle=1&src=photo`).
@@ -115,7 +128,7 @@ query string (`?lang=ja&series=std&cat=5&angle=1&src=photo`).
 ```
 data/       catalog.json, catalog.csv — the source of truth
 images/     line/ and photo/, each with w300/, w600/ and w900/ tiers
-web/        static gallery source (index.html, app.js, app.css, i18n.js, common.js, changelog.yaml)
+web/        static gallery source (index.html, library.html, TypeScript and Tailwind styles in src/, sw/, changelog.yaml)
 tools/      build_images.py, build_site.py, verify.py, import_series.py, qc_merge.py, review_sheets.py, pack_release.py, …
 docs/       DESIGN, DECISIONS, GENERATION, LICENSING, translated READMEs, logo, screenshot
 ```

@@ -15,7 +15,7 @@
 [![Maps](https://img.shields.io/badge/クレイ·深度·法線-944-4A4A4A?style=flat-square)](../GENERATION.md)
 [![Photos](https://img.shields.io/badge/実写-89-5B616A?style=flat-square)](../GENERATION.md)
 [![Languages](https://img.shields.io/badge/名称-ja%20·%20zh%20·%20en%20·%20ko-0aa06e?style=flat-square)](../../data/catalog.csv)
-[![Dependencies](https://img.shields.io/badge/ランタイム依存-0-E07A52?style=flat-square)](../../web)
+[![Dependencies](https://img.shields.io/badge/ランタイム依存-page--agent%20(遅延読込)-E07A52?style=flat-square)](../../package.json)
 [![Images](https://img.shields.io/badge/images-CC0--1.0-blue?style=flat-square)](../../LICENSE-images)
 [![Code](https://img.shields.io/badge/code-Apache--2.0-blue?style=flat-square)](../../LICENSE)
 
@@ -81,9 +81,10 @@ v0.4.1。ギャラリーのダウンロードパネルと同じファイルで�
 
 ## ギャラリー
 
-`web/` はカタログから生成する依存ゼロの静的ギャラリーです。シリーズタブ（シリーズを選ぶと分類で絞り込み）、アングル絞り込み、線画 / 実写の切り替え、ポーズ単位・一枚単位の表示、セクシー系のぼかしを外すスイッチ、キーボードとスワイプで操作でき線画 / 実写 / 比較を切り替えられるライトボックス、ポーズごとのページ、四か国語の UI、ダークモードに対応しています。仕様は [DESIGN.md](../DESIGN.md) にあります。
+`web/` はカタログから生成する静的ギャラリーです（TypeScript + Tailwind CSS、Vite でバンドル。実行時の依存は AI アシスタント用の page-agent だけで、パネルを開いたときにだけ読み込みます）。シリーズタブ（シリーズを選ぶと分類で絞り込み）、アングル絞り込み、線画 / 実写の切り替え、ポーズ単位・一枚単位の表示、セクシー系のぼかしを外すスイッチ、キーボードとスワイプで操作でき線画 / 実写 / 比較を切り替えられるライトボックス、ポーズごとのページ、四か国語の UI、ダークモードに対応しています。仕様は [DESIGN.md](../DESIGN.md) にあります。
 
 ```bash
+npm ci && npm run build                        # Vite で web/src → web/dist（Node 20.19 以上）
 python3 tools/build_site.py --link-images      # site/ を生成（画像はシンボリックリンクで高速プレビュー）
 python3 -m http.server 8000 -d site            # http://localhost:8000
 python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # 画像とシェアカード込みのデプロイ用ビルド
@@ -96,7 +97,7 @@ python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # �
 ```
 data/       catalog.json、catalog.csv — 唯一のデータソース
 images/     line/ と photo/、それぞれ w300/、w600/、w900/
-web/        静的ギャラリーのソース（index.html、app.js、app.css、i18n.js、common.js、changelog.yaml）
+web/        静的ギャラリーのソース（index.html、library.html、src/ の TypeScript と Tailwind スタイル、sw/、changelog.yaml）
 tools/      build_images.py、build_site.py、verify.py、import_series.py、qc_merge.py、review_sheets.py、pack_release.py ほか
 docs/       DESIGN、DECISIONS、GENERATION、LICENSING、各言語の README、ロゴ、スクリーンショット
 ```

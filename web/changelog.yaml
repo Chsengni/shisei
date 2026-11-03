@@ -4,6 +4,22 @@
 # tag: new | improve | announce | removed. link: an in-site path without language prefix (/, /changelog/, /pose/P001/),
 # optionally with ?query and #hash; the build prefixes the reader's language. Newest first.
 entries:
+  - date: 2026-11-03
+    tag: new
+    title: An AI assistant that can drive the gallery
+    desc: Open the AI assistant on the right edge, add your own model key, and ask in one sentence, such as open P012 from the side. Images you have seen now load instantly next time.
+    link: /
+    cta: Open the gallery
+    title_zh: AI 助手可以替你操作画廊了
+    desc_zh: 点右侧边缘的「AI 助手」，填上你自己的模型 Key，用一句话让它帮忙，比如「打开 P012 的侧面」。看过的图片下次打开会更快。
+    cta_zh: 打开画廊
+    title_ja: AI アシスタントがギャラリーを操作します
+    desc_ja: 右端の「AI アシスタント」を開き、自分のモデルのキーを入れて、「P012 を横から開いて」のように頼めます。一度見た画像は次から素早く表示されます。
+    cta_ja: ギャラリーを開く
+    title_ko: AI 도우미가 갤러리를 대신 조작합니다
+    desc_ko: 오른쪽 끝의 「AI 도우미」를 열고 내 모델 키를 넣은 뒤 「P012 측면 열기」처럼 한 문장으로 부탁하세요. 한 번 본 이미지는 다음에 더 빨리 열립니다.
+    cta_ko: 갤러리 열기
+
   - date: 2026-11-02
     tag: improve
     title: Share any costume, prop or scene

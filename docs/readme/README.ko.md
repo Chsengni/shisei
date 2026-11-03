@@ -15,7 +15,7 @@
 [![Maps](https://img.shields.io/badge/클레이·깊이·노멀-944-4A4A4A?style=flat-square)](../GENERATION.md)
 [![Photos](https://img.shields.io/badge/실사-89-5B616A?style=flat-square)](../GENERATION.md)
 [![Languages](https://img.shields.io/badge/이름-ja%20·%20zh%20·%20en%20·%20ko-0aa06e?style=flat-square)](../../data/catalog.csv)
-[![Dependencies](https://img.shields.io/badge/런타임%20의존성-0-E07A52?style=flat-square)](../../web)
+[![Dependencies](https://img.shields.io/badge/런타임%20의존성-page--agent%20(지연%20로드)-E07A52?style=flat-square)](../../package.json)
 [![Images](https://img.shields.io/badge/images-CC0--1.0-blue?style=flat-square)](../../LICENSE-images)
 [![Code](https://img.shields.io/badge/code-Apache--2.0-blue?style=flat-square)](../../LICENSE)
 
@@ -81,9 +81,10 @@ v0.4.1, 갤러리 다운로드 패널과 같은 파일입니다. 원본을 빼�
 
 ## 갤러리
 
-`web/`은 카탈로그에서 생성하는 의존성 없는 정적 갤러리입니다. 시리즈 탭(시리즈를 고르면 분류로 필터), 앵글 필터, 선화 / 실사 전환, 포즈별 또는 한 장씩 보기, 섹시 시리즈의 흐림을 푸는 스위치, 키보드와 스와이프로 넘기고 선화 / 실사 / 비교를 바꿀 수 있는 라이트박스, 포즈별 페이지, 4개 언어 UI, 다크 모드를 지원합니다. 사양은 [DESIGN.md](../DESIGN.md)에 있습니다.
+`web/`은 카탈로그에서 생성하는 정적 갤러리입니다(TypeScript + Tailwind CSS, Vite로 번들. 런타임 의존성은 AI 도우미용 page-agent 하나이며 패널을 열 때만 불러옵니다). 시리즈 탭(시리즈를 고르면 분류로 필터), 앵글 필터, 선화 / 실사 전환, 포즈별 또는 한 장씩 보기, 섹시 시리즈의 흐림을 푸는 스위치, 키보드와 스와이프로 넘기고 선화 / 실사 / 비교를 바꿀 수 있는 라이트박스, 포즈별 페이지, 4개 언어 UI, 다크 모드를 지원합니다. 사양은 [DESIGN.md](../DESIGN.md)에 있습니다.
 
 ```bash
+npm ci && npm run build                        # Vite로 web/src → web/dist (Node 20.19 이상)
 python3 tools/build_site.py --link-images      # site/ 생성 (이미지는 심볼릭 링크로 빠르게 미리보기)
 python3 -m http.server 8000 -d site            # http://localhost:8000
 python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # 이미지와 공유 카드를 포함한 배포용 빌드
@@ -96,7 +97,7 @@ python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # �
 ```
 data/       catalog.json, catalog.csv — 유일한 데이터 원본
 images/     line/과 photo/, 각각 w300/, w600/, w900/
-web/        정적 갤러리 소스 (index.html, app.js, app.css, i18n.js, common.js, changelog.yaml)
+web/        정적 갤러리 소스 (index.html, library.html, src/의 TypeScript·Tailwind 스타일, sw/, changelog.yaml)
 tools/      build_images.py, build_site.py, verify.py, import_series.py, qc_merge.py, review_sheets.py, pack_release.py 등
 docs/       DESIGN, DECISIONS, GENERATION, LICENSING, 언어별 README, 로고, 스크린샷
 ```

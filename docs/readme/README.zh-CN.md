@@ -15,7 +15,7 @@
 [![Maps](https://img.shields.io/badge/白模·深度·法线-944-4A4A4A?style=flat-square)](../GENERATION.md)
 [![Photos](https://img.shields.io/badge/实拍-89-5B616A?style=flat-square)](../GENERATION.md)
 [![Languages](https://img.shields.io/badge/名称-ja%20·%20zh%20·%20en%20·%20ko-0aa06e?style=flat-square)](../../data/catalog.csv)
-[![Dependencies](https://img.shields.io/badge/运行时依赖-0-E07A52?style=flat-square)](../../web)
+[![Dependencies](https://img.shields.io/badge/运行时依赖-page--agent%20(按需加载)-E07A52?style=flat-square)](../../package.json)
 [![Images](https://img.shields.io/badge/images-CC0--1.0-blue?style=flat-square)](../../LICENSE-images)
 [![Code](https://img.shields.io/badge/code-Apache--2.0-blue?style=flat-square)](../../LICENSE)
 
@@ -81,9 +81,10 @@ v0.4.1，和画廊下载面板里的是同一批文件。除原图包外，每�
 
 ## 画廊
 
-`web/` 是从 catalog 生成的零依赖静态画廊：系列标签（选了系列后再按分类筛）、机位筛选、线稿 / 实拍切换、按套或单张浏览、一键取消性感系列的模糊、支持键盘和滑动并可切换线稿 / 实拍 / 对照的大图灯箱、每个姿势一个页面、四种界面语言和深色模式。规格见 [DESIGN.md](../DESIGN.md)。
+`web/` 是从 catalog 生成的静态画廊（TypeScript + Tailwind CSS，用 Vite 打包；运行时唯一依赖是 AI 助手用的 page-agent，打开面板时才加载）：系列标签（选了系列后再按分类筛）、机位筛选、线稿 / 实拍切换、按套或单张浏览、一键取消性感系列的模糊、支持键盘和滑动并可切换线稿 / 实拍 / 对照的大图灯箱、每个姿势一个页面、四种界面语言和深色模式。规格见 [DESIGN.md](../DESIGN.md)。
 
 ```bash
+npm ci && npm run build                        # Vite 构建 web/src → web/dist（Node 20.19+）
 python3 tools/build_site.py --link-images      # 生成 site/（图片用符号链接，预览快）
 python3 -m http.server 8000 -d site            # http://localhost:8000
 python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # 部署用构建，含图片和分享卡
@@ -96,7 +97,7 @@ python3 -I tools/build_site.py --public --site https://shisei.indaloop.app   # �
 ```
 data/       catalog.json、catalog.csv：唯一的数据源
 images/     line/ 和 photo/，各有 w300/、w600/ 和 w900/ 三档
-web/        静态画廊源码（index.html、app.js、app.css、i18n.js、common.js、changelog.yaml）
+web/        静态画廊源码（index.html、library.html、src/ 下的 TypeScript 与 Tailwind 样式、sw/、changelog.yaml）
 tools/      build_images.py、build_site.py、verify.py、import_series.py、qc_merge.py、review_sheets.py、pack_release.py 等
 docs/       DESIGN、DECISIONS、GENERATION、LICENSING、各语言 README、logo、截图
 ```
